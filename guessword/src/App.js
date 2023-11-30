@@ -30,16 +30,20 @@ function App() {
   const [guesses, setGuesses] = useState(3);
   const [score, setScore] = useState(0);
 
-  const pickedWordAndPikedCategory = () =>{
+  const pickedWordAndPikedCategory = useCallback(() =>{
     //piking a random category
     const categorias = Object.keys(words);
     const category = categorias[Math.floor(Math.random() * Object.keys(categorias).length)]
     //piking a random word
     const word = words[category][Math.floor(Math.random() * words[category].length)]
     return {word,category}
-  }
+  },[words]);
+
   //Starts the guess word game
-  const startGame = () => {
+  const startGame = useCallback(() => {
+    //clear all letters
+    clearLetterStates();
+
     //piked word and piked category
     const {word, category} = pickedWordAndPikedCategory();
     
@@ -53,7 +57,8 @@ function App() {
     setLetters(wordLetters);
 
     setGameStage(stages[1].name);
-  }
+  }, [pickedWordAndPikedCategory]);
+
   //Process the letter input
   const verifyLetter = (letter) =>{
     const normalizedLetter = letter.toLowerCase()
@@ -81,12 +86,27 @@ function App() {
     setGuessedLetters([]);
     setWrongLetters([]);
   }
+  // Check if guesses ended
   useEffect(() => {
     if(guesses <= 0){
       clearLetterStates();
       setGameStage(stages[2].name)
     }
   },[guesses])
+
+  //Check win condition
+  useEffect(() => {
+
+    const uniqueLetters = [...new Set(letters)];
+
+    //win condition
+    if(guessedLetters.length === uniqueLetters.length){
+      // add score
+      setScore((actualScore) => actualScore += 100)
+      //restart game with new word
+      startGame();
+    }
+  },[guessedLetters, letters, startGame])
 
   //Retry
   const retry = () => {
@@ -107,7 +127,7 @@ function App() {
       guesses={guesses}
       score={score}
       />}
-      {gameStage === "end" && <GameOver retry={retry}/>}
+      {gameStage === "end" && <GameOver retry={retry} score={score}/>}
     </div>
   );
 }
