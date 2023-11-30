@@ -19,8 +19,32 @@ function App() {
   const [gameStage, setGameStage] = useState(stages[0].name);
   const [words] = useState(wordslist);
 
+  const [pikedWord, setPikedWord] = useState("");
+  const [pikedCategory, setPikedCategory] = useState("");
+  const [letters, setLetters] = useState([]);
+
+  const pickedWordAndPikedCategory = () =>{
+    //piking a random category
+    const categorias = Object.keys(words);
+    const category = categorias[Math.floor(Math.random() * Object.keys(categorias).length)]
+    //piking a random word
+    const word = words[category][Math.floor(Math.random() * words.keys(category).length)]
+    return {word,category}
+  }
   //Starts the guess word game
   const startGame = () => {
+    //piked word and piked category
+    const {word, category} = pickedWordAndPikedCategory();
+    
+    //creating an array of letters
+    let wordLetters = word.split("");
+    wordLetters = wordLetters.map((x) => x.toLowerCase());
+    
+    // Fill states
+    setPikedWord(word);
+    setPikedCategory(category);
+    setLetters(letters);
+    
     setGameStage(stages[1].name);
   }
   //Process the letter input
