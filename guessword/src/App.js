@@ -28,7 +28,7 @@ function App() {
     const categorias = Object.keys(words);
     const category = categorias[Math.floor(Math.random() * Object.keys(categorias).length)]
     //piking a random word
-    const word = words[category][Math.floor(Math.random() * words.keys(category).length)]
+    const word = words[category][Math.floor(Math.random() * words[category].length)]
     return {word,category}
   }
   //Starts the guess word game
@@ -44,7 +44,7 @@ function App() {
     setPikedWord(word);
     setPikedCategory(category);
     setLetters(letters);
-    
+
     setGameStage(stages[1].name);
   }
   //Process the letter input
